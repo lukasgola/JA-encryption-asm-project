@@ -45,7 +45,7 @@ namespace Encryption
         private void button1_Click(object sender, EventArgs e)
         {
 
-            Bitmap image = (Bitmap)pictureBox.Image;
+            System.Drawing.Image image = pictureBox.Image;
 
             if (image != null)
             {
@@ -76,6 +76,32 @@ namespace Encryption
 
             // Komunikat potwierdzający skopiowanie tekstu
             MessageBox.Show("Tekst został skopiowany do schowka.");
+
+        }
+
+        // Funkcja do dekodowania ciągu Base64 na obraz
+        private System.Drawing.Image ConvertBase64ToImage(string base64String)
+        {
+            // Konwersja ciągu Base64 na tablicę bajtów
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+
+            using (MemoryStream memoryStream = new MemoryStream(imageBytes))
+            {
+                // Konwersja tablicy bajtów na obraz
+                System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream);
+                return image;
+            }
+        }
+
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // Przykładowe użycie funkcji ConvertBase64ToImage
+            string base64String = textBox1.Text; // Zastąp tym rzeczywistym ciągiem Base64
+            System.Drawing.Image imageFromBase64 = ConvertBase64ToImage(base64String);
+
+            // Teraz możesz użyć obiektu 'imageFromBase64', np. wyświetlić go w kontrolce PictureBox
+            pictureBox.Image = imageFromBase64;
 
         }
     }
