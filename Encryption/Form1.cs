@@ -52,22 +52,33 @@ namespace Encryption
         private void button1_Click(object sender, EventArgs e)
         {
 
+            int mode = 1;
+
             System.Drawing.Image image = pictureBox.Image;
 
             if (image != null)
             {
-                // Konwersja obrazu na format Base64
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    image.Save(memoryStream, ImageFormat.Jpeg); // Możesz wybrać odpowiedni format obrazu
-                    byte[] imageBytes = memoryStream.ToArray();
-                    string base64String = Convert.ToBase64String(imageBytes);
 
-                    // Tutaj możesz wykorzystać ciąg base64String do dalszych działań, np. zapisu do pliku lub przesyłki przez sieć
-                    // Możesz również wyświetlić ten ciąg w TextBox lub innym elemencie UI w aplikacji
-                    Console.WriteLine("Obraz w formacie Base64: " + base64String);
-                    textBox1.Text = base64String;
+                if(mode == 1)
+                {
+                    //byte[] pixels = ConvertImageToByteArray(image);
+                    //int result = MyProc1(pixels, image.Width, image.Height);
+                } else
+                {
+                    // Konwersja obrazu na format Base64
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        image.Save(memoryStream, ImageFormat.Jpeg); // Możesz wybrać odpowiedni format obrazu
+                        byte[] imageBytes = memoryStream.ToArray();
+                        string base64String = Convert.ToBase64String(imageBytes);
+
+                        // Tutaj możesz wykorzystać ciąg base64String do dalszych działań, np. zapisu do pliku lub przesyłki przez sieć
+                        // Możesz również wyświetlić ten ciąg w TextBox lub innym elemencie UI w aplikacji
+                        Console.WriteLine("Obraz w formacie Base64: " + base64String);
+                        textBox1.Text = base64String;
+                    }
                 }
+                
             } else
             {
                 MessageBox.Show("Nie wybrano obrazu.");
