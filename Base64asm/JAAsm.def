@@ -1,0 +1,2 @@
+LIBRARY Base64asm
+EXPORTS MyProc1

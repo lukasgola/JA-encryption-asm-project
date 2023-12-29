@@ -1,0 +1,10 @@
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\bin\x64\Debug\Encryption.exe.config
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\bin\x64\Debug\Encryption.exe
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\bin\x64\Debug\Encryption.pdb
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.csproj.AssemblyReference.cache
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.Form1.resources
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.Properties.Resources.resources
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.csproj.GenerateResource.cache
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.csproj.CoreCompileInputs.cache
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.exe
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\x64\Debug\Encryption.pdb

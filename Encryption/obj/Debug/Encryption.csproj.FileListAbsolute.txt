@@ -18,3 +18,13 @@ C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\Encryption\obj\Debug\E
 C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.csproj.CoreCompileInputs.cache
 C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.exe
 C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.pdb
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\bin\Debug\Encryption.exe.config
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\bin\Debug\Encryption.exe
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\bin\Debug\Encryption.pdb
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.csproj.AssemblyReference.cache
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.Form1.resources
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.Properties.Resources.resources
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.csproj.GenerateResource.cache
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.csproj.CoreCompileInputs.cache
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.exe
+C:\Users\atomo\Desktop\JA-encryption-asm-project\Encryption\obj\Debug\Encryption.pdb
