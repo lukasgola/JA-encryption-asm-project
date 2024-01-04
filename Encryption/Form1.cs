@@ -19,7 +19,14 @@ namespace Encryption
 
 
         [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
-        public static extern int MyProc1(int value1, int value2); // Dostosuj typy parametrów i typ zwracany
+        public static extern void ASMAdjustBrightness(
+            IntPtr bmpDataScan0,
+            IntPtr bmpOriginal,
+            int value,
+            int imageSizeInBytes
+        );
+
+        public Bitmap mainImage;
 
 
         public Form1()
@@ -29,7 +36,7 @@ namespace Encryption
 
 
 
-        private void button2_Click(object sender, EventArgs e)
+        private void LoadImage(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -45,13 +52,13 @@ namespace Encryption
 
                     // Przypisanie przeskalowanego obrazu do PictureBox
                     pictureBox.Image = resizedImage;
+                    mainImage = new Bitmap(resizedImage);
                 }
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void ImageToBase64(object sender, EventArgs e)
         {
-
             System.Drawing.Image image = pictureBox.Image;
 
             if (image != null)
@@ -72,9 +79,10 @@ namespace Encryption
             {
                 MessageBox.Show("Nie wybrano obrazu.");
             }
+            
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void CopyOutput(object sender, EventArgs e)
         {
             // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
@@ -91,10 +99,7 @@ namespace Encryption
 
         // Funkcja do dekodowania ciągu Base64 na obraz
         private System.Drawing.Image ConvertBase64ToImage(string base64String)
-        {
-            int result = MyProc1(5, 10); // Przykładowe wywołanie funkcji z DLL z parametrami 5 i 10
-            MessageBox.Show("Wynik: " + result);
-
+        {;
 
             // Konwersja ciągu Base64 na tablicę bajtów
             byte[] imageBytes = Convert.FromBase64String(base64String);
@@ -111,7 +116,7 @@ namespace Encryption
         }
 
 
-        private void button4_Click(object sender, EventArgs e)
+        private void Base64ToImage(object sender, EventArgs e)
         {
 
             if (textBox1.Text != "")
@@ -128,6 +133,40 @@ namespace Encryption
             }
             
 
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+
+            // Załóżmy, że resizedImage jest obiektem Bitmap, który chcesz przekształcić
+            Bitmap inputImage = new Bitmap(mainImage);
+            Bitmap resizedImage = new Bitmap(pictureBox.Image);
+
+
+            // Pobieranie danych o obrazie
+
+            BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, resizedImage.Width, resizedImage.Height), ImageLockMode.ReadWrite, resizedImage.PixelFormat);
+            IntPtr scan0 = bitmapData0.Scan0;
+
+            BitmapData bitmapData1 = resizedImage.LockBits(new Rectangle(0, 0, resizedImage.Width, resizedImage.Height), ImageLockMode.ReadWrite, resizedImage.PixelFormat);
+            IntPtr scan1 = bitmapData1.Scan0;
+
+
+            int imageSizeInBytes = Math.Abs(bitmapData1.Stride) * resizedImage.Height;
+            int value = trackBar1.Value;
+
+            value -= 255;
+
+            Console.WriteLine(value.ToString());
+
+
+            // Wywołanie funkcji asemblowej
+            ASMAdjustBrightness(scan1, scan0, value, imageSizeInBytes);
+
+            // Odblokowanie danych obrazu po przekształceniach
+            resizedImage.UnlockBits(bitmapData0);
+
+            pictureBox.Image = resizedImage;
         }
     }
 }

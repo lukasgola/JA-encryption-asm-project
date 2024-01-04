@@ -34,7 +34,9 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -46,7 +48,7 @@
             this.button1.TabIndex = 4;
             this.button1.Text = "Base 64 >";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.ImageToBase64);
             // 
             // pictureBox
             // 
@@ -62,9 +64,9 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(150, 40);
             this.button2.TabIndex = 6;
-            this.button2.Text = "Załaduj zdjęcie";
+            this.button2.Text = "Load Image";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.LoadImage);
             // 
             // textBox1
             // 
@@ -80,9 +82,9 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(150, 40);
             this.button3.TabIndex = 8;
-            this.button3.Text = "Skopiuj tekst";
+            this.button3.Text = "Copy text";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.CopyOutput);
             // 
             // button4
             // 
@@ -91,15 +93,26 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(150, 40);
             this.button4.TabIndex = 9;
-            this.button4.Text = "< Obraz";
+            this.button4.Text = "< Image";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.Base64ToImage);
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(52, 387);
+            this.trackBar1.Maximum = 510;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(400, 45);
+            this.trackBar1.TabIndex = 10;
+            this.trackBar1.Value = 255;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1157, 434);
+            this.ClientSize = new System.Drawing.Size(1157, 440);
+            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.textBox1);
@@ -109,6 +122,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -121,6 +135,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }
 
