@@ -18,7 +18,7 @@ namespace Encryption
     {
 
 
-        [DllImport(@"C:\Users\atomo\Desktop\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
+        [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
         public static extern int MyProc1(int value1, int value2); // Dostosuj typy parametrów i typ zwracany
 
 
@@ -29,7 +29,7 @@ namespace Encryption
 
 
 
-        private void LoadImage(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -49,47 +49,32 @@ namespace Encryption
             }
         }
 
-
-        private void ImageToBase64(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-
-            int mode = 0;
 
             System.Drawing.Image image = pictureBox.Image;
 
             if (image != null)
             {
-
-                if (mode == 1)
+                // Konwersja obrazu na format Base64
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    //byte[] pixels = ConvertImageToByteArray(image);
-                    //int result = MyProc1(pixels, image.Width, image.Height);
-                }
-                else
-                {
-                    // Konwersja obrazu na format Base64
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        image.Save(memoryStream, ImageFormat.Jpeg); // Możesz wybrać odpowiedni format obrazu
-                        byte[] imageBytes = memoryStream.ToArray();
-                        string base64String = Convert.ToBase64String(imageBytes);
+                    image.Save(memoryStream, ImageFormat.Jpeg); // Możesz wybrać odpowiedni format obrazu
+                    byte[] imageBytes = memoryStream.ToArray();
+                    string base64String = Convert.ToBase64String(imageBytes);
 
-                        // Tutaj możesz wykorzystać ciąg base64String do dalszych działań, np. zapisu do pliku lub przesyłki przez sieć
-                        // Możesz również wyświetlić ten ciąg w TextBox lub innym elemencie UI w aplikacji
-                        Console.WriteLine("Obraz w formacie Base64: " + base64String);
-                        textBox1.Text = base64String;
-                    }
+                    // Tutaj możesz wykorzystać ciąg base64String do dalszych działań, np. zapisu do pliku lub przesyłki przez sieć
+                    // Możesz również wyświetlić ten ciąg w TextBox lub innym elemencie UI w aplikacji
+                    Console.WriteLine("Obraz w formacie Base64: " + base64String);
+                    textBox1.Text = base64String;
                 }
-
-            }
-            else
+            } else
             {
                 MessageBox.Show("Nie wybrano obrazu.");
             }
         }
 
-
-        private void CopyText(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
             // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
@@ -107,7 +92,9 @@ namespace Encryption
         // Funkcja do dekodowania ciągu Base64 na obraz
         private System.Drawing.Image ConvertBase64ToImage(string base64String)
         {
-            
+            int result = MyProc1(5, 10); // Przykładowe wywołanie funkcji z DLL z parametrami 5 i 10
+            MessageBox.Show("Wynik: " + result);
+
 
             // Konwersja ciągu Base64 na tablicę bajtów
             byte[] imageBytes = Convert.FromBase64String(base64String);
@@ -124,29 +111,23 @@ namespace Encryption
         }
 
 
-        private void Base64ToImage(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
 
             if (textBox1.Text != "")
             {
-                
                 // Przykładowe użycie funkcji ConvertBase64ToImage
                 string base64String = textBox1.Text; // Zastąp tym rzeczywistym ciągiem Base64
                 System.Drawing.Image imageFromBase64 = ConvertBase64ToImage(base64String);
 
                 // Teraz możesz użyć obiektu 'imageFromBase64', np. wyświetlić go w kontrolce PictureBox
                 pictureBox.Image = imageFromBase64;
-            }
-            else
+            } else
             {
-                int result = MyProc1(5, 10); // Przykładowe wywołanie funkcji z DLL z parametrami 5 i 10
-                MessageBox.Show("Wynik: " + result);
                 MessageBox.Show("Nie podano tekstu.");
             }
-
+            
 
         }
-
-
     }
 }
