@@ -72,28 +72,36 @@ namespace Encryption
 
                     // Tutaj możesz wykorzystać ciąg base64String do dalszych działań, np. zapisu do pliku lub przesyłki przez sieć
                     // Możesz również wyświetlić ten ciąg w TextBox lub innym elemencie UI w aplikacji
-                    Console.WriteLine("Obraz w formacie Base64: " + base64String);
                     textBox1.Text = base64String;
                 }
             } else
             {
-                MessageBox.Show("Nie wybrano obrazu.");
+                MessageBox.Show("No image given.");
             }
             
         }
 
         private void CopyOutput(object sender, EventArgs e)
         {
-            // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
-            // Pobranie tekstu z TextBox
-            string textToCopy = textBox1.Text;
+            if(textBox1.Text != "")
+            {
+                // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
-            // Kopiowanie tekstu do schowka
-            Clipboard.SetText(textToCopy);
+                // Pobranie tekstu z TextBox
+                string textToCopy = textBox1.Text;
 
-            // Komunikat potwierdzający skopiowanie tekstu
-            MessageBox.Show("Tekst został skopiowany do schowka.");
+                // Kopiowanie tekstu do schowka
+                Clipboard.SetText(textToCopy);
+
+                // Komunikat potwierdzający skopiowanie tekstu
+                MessageBox.Show("Text was copied to the clipboard.");
+            }
+            else
+            {
+                MessageBox.Show("No text given.");
+            }
+
 
         }
 
@@ -110,8 +118,8 @@ namespace Encryption
                 System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream);
                 return image;
             }
-
             
+
 
         }
 
@@ -129,7 +137,7 @@ namespace Encryption
                 pictureBox.Image = imageFromBase64;
             } else
             {
-                MessageBox.Show("Nie podano tekstu.");
+                MessageBox.Show("No text given.");
             }
             
 
@@ -137,36 +145,39 @@ namespace Encryption
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-
-            // Załóżmy, że resizedImage jest obiektem Bitmap, który chcesz przekształcić
-            Bitmap inputImage = new Bitmap(mainImage);
-            Bitmap resizedImage = new Bitmap(pictureBox.Image);
-
-
-            // Pobieranie danych o obrazie
-
-            BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, resizedImage.Width, resizedImage.Height), ImageLockMode.ReadWrite, resizedImage.PixelFormat);
-            IntPtr scan0 = bitmapData0.Scan0;
-
-            BitmapData bitmapData1 = resizedImage.LockBits(new Rectangle(0, 0, resizedImage.Width, resizedImage.Height), ImageLockMode.ReadWrite, resizedImage.PixelFormat);
-            IntPtr scan1 = bitmapData1.Scan0;
+            if(mainImage != null)
+            {
+                // Załóżmy, że resizedImage jest obiektem Bitmap, który chcesz przekształcić
+                Bitmap inputImage = new Bitmap(mainImage);
+                Bitmap resizedImage = new Bitmap(pictureBox.Image);
 
 
-            int imageSizeInBytes = Math.Abs(bitmapData1.Stride) * resizedImage.Height;
-            int value = trackBar1.Value;
+                // Pobieranie danych o obrazie
 
-            value -= 255;
+                BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, resizedImage.Width, resizedImage.Height), ImageLockMode.ReadWrite, resizedImage.PixelFormat);
+                IntPtr scan0 = bitmapData0.Scan0;
 
-            Console.WriteLine(value.ToString());
+                BitmapData bitmapData1 = resizedImage.LockBits(new Rectangle(0, 0, resizedImage.Width, resizedImage.Height), ImageLockMode.ReadWrite, resizedImage.PixelFormat);
+                IntPtr scan1 = bitmapData1.Scan0;
 
 
-            // Wywołanie funkcji asemblowej
-            ASMAdjustBrightness(scan1, scan0, value, imageSizeInBytes);
+                int imageSizeInBytes = Math.Abs(bitmapData1.Stride) * resizedImage.Height;
+                int value = trackBar1.Value;
 
-            // Odblokowanie danych obrazu po przekształceniach
-            resizedImage.UnlockBits(bitmapData0);
+                value -= 255;
 
-            pictureBox.Image = resizedImage;
+                Console.WriteLine(value.ToString());
+
+
+                // Wywołanie funkcji asemblowej
+                ASMAdjustBrightness(scan1, scan0, value, imageSizeInBytes);
+
+                // Odblokowanie danych obrazu po przekształceniach
+                resizedImage.UnlockBits(bitmapData0);
+
+                pictureBox.Image = resizedImage;
+            }
+            
         }
     }
 }
