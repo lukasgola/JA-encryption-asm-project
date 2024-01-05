@@ -25,6 +25,15 @@ namespace Encryption
             int value,
             int imageSizeInBytes
         );
+        [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
+        public static extern int ImageToBase64(
+            IntPtr bmpOriginal,
+            int imageSizeInBytes
+        );
+        
+        [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
+        public static extern void Base64Encode(byte[] inputString);
+
 
         public Bitmap mainImage;
 
@@ -60,6 +69,24 @@ namespace Encryption
         private void ImageToBase64(object sender, EventArgs e)
         {
             System.Drawing.Image image = pictureBox.Image;
+
+            Bitmap inputImage = new Bitmap(mainImage);
+            BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, inputImage.Width, inputImage.Height), ImageLockMode.ReadWrite, inputImage.PixelFormat);
+            IntPtr scan0 = bitmapData0.Scan0;
+            int imageSizeInBytes = Math.Abs(bitmapData0.Stride) * inputImage.Height;
+            int result = ImageToBase64(scan0, imageSizeInBytes);
+            MessageBox.Show(result.ToString());
+
+
+            string inputString = "Hello, World!";
+            byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(inputString);
+
+            Base64Encode(inputBytes);
+
+            // Retrieve the encoded string from encodedOutput in assembly
+            string encodedString = System.Text.Encoding.UTF8.GetString(inputBytes);
+
+            MessageBox.Show(encodedString);
 
             if (image != null)
             {
