@@ -1,4 +1,4 @@
 LIBRARY JAAsm
 EXPORTS ASMAdjustBrightness
 EXPORTS ImageToBase64
-EXPORTS Base64Encode
+EXPORTS ImageToBase64

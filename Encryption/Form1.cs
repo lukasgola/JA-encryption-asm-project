@@ -25,14 +25,14 @@ namespace Encryption
             int value,
             int imageSizeInBytes
         );
+
         [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
-        public static extern int ImageToBase64(
-            IntPtr bmpOriginal,
-            int imageSizeInBytes
+        public static extern string ImageToBase64(
+            IntPtr textOriginal,
+            IntPtr textOutPut,
+            IntPtr base64,
+            int textSizeInBytes
         );
-        
-        [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
-        public static extern void Base64Encode(byte[] inputString);
 
 
         public Bitmap mainImage;
@@ -68,6 +68,55 @@ namespace Encryption
 
         private void ImageToBase64(object sender, EventArgs e)
         {
+
+            string yourString = "HEL";
+            byte[] stringBytes = Encoding.ASCII.GetBytes(yourString);
+
+            IntPtr input = Marshal.AllocHGlobal(stringBytes.Length);
+            Marshal.Copy(stringBytes, 0, input, stringBytes.Length);
+
+
+            string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+            byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
+            IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
+            Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
+
+
+            // Provide output buffer and text size as needed
+            IntPtr output = Marshal.AllocHGlobal(stringBytes.Length);
+            int textSizeInBytes = stringBytes.Length;
+
+            string result = ImageToBase64(input, output, base_64, textSizeInBytes);
+
+            Marshal.FreeHGlobal(input);
+            Marshal.FreeHGlobal(base_64);
+
+            MessageBox.Show(result.ToString());
+
+            /*
+            string yourString = "Your string here";
+            byte[] bytes = Encoding.ASCII.GetBytes(yourString);
+            IntPtr stringPtr = Marshal.AllocHGlobal(bytes.Length);
+            Marshal.Copy(bytes, 0, stringPtr, bytes.Length);
+
+            string output = "";
+            byte[] bytes2 = Encoding.ASCII.GetBytes(output);
+            IntPtr outputPtr = Marshal.AllocHGlobal(100);
+            Marshal.Copy(bytes2, 0, outputPtr, bytes2.Length);
+
+            string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            byte[] bytes3 = Encoding.ASCII.GetBytes(base64);
+            IntPtr basePtr = Marshal.AllocHGlobal(bytes3.Length);
+            Marshal.Copy(bytes3, 0, basePtr, bytes3.Length);
+
+            ulong result1 = base64_encode(stringPtr, (ulong)yourString.Length, outputPtr, basePtr);
+            Console.WriteLine($"Result: {result1}"); // Handle the result accordingly
+
+            Marshal.FreeHGlobal(stringPtr);
+            Marshal.FreeHGlobal(outputPtr);
+            Marshal.FreeHGlobal(basePtr);
+
+            
             System.Drawing.Image image = pictureBox.Image;
 
             Bitmap inputImage = new Bitmap(mainImage);
@@ -77,17 +126,7 @@ namespace Encryption
             int result = ImageToBase64(scan0, imageSizeInBytes);
             MessageBox.Show(result.ToString());
 
-
-            string inputString = "Hello, World!";
-            byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(inputString);
-
-            Base64Encode(inputBytes);
-
-            // Retrieve the encoded string from encodedOutput in assembly
-            string encodedString = System.Text.Encoding.UTF8.GetString(inputBytes);
-
-            MessageBox.Show(encodedString);
-
+            
             if (image != null)
             {
                 // Konwersja obrazu na format Base64
@@ -105,7 +144,7 @@ namespace Encryption
             {
                 MessageBox.Show("No image given.");
             }
-            
+            */
         }
 
         private void CopyOutput(object sender, EventArgs e)

@@ -1,3 +1,4 @@
 ﻿  Assembling JAAsm.asm...
      Creating library C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.lib and object C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.exp
+LINK : warning LNK4075: ignoring '/LARGEADDRESSAWARE:NO' due to '/DLL' specification
   JAAsm.vcxproj -> C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll

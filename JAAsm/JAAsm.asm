@@ -1,11 +1,12 @@
 .data
     inputData db "Hello, World!", 0      ; Input string to be encoded in Base64
     encodedOutput db 100 dup(0)          ; Buffer to hold the encoded Base64 output
+    
 
 .code
 ; void ASMAdjustBrightness(
 ;	unsigned char* bmpDataScan0,	= RCX,
-;	ussigned char* bmpOriginal,		= RDX,
+;	unsigned char* bmpOriginal,		= RDX,
 ;	short value,					= R8W,
 ;	int imageSizeInBytes			= R9D,
 ; )
@@ -46,58 +47,79 @@ MainLoopSub:
 ASMAdjustBrightness endp
 
 
-; void ImageToBase64(
-;	ussigned char* bmpOriginal,		= RCX,
-;	int imageSizeInBytes			= RDX,
+
+
+
+; int TextToBase64(
+;	unsigned char* inputString,		= RCX,
+;   unsigned char* outputString     = RDX,
+;   unsigned char* base64_table     = R8,
+;	int imageSizeInBytes			= R9,
 ; )
 
 ImageToBase64 proc
-	xor r10, r10
+    xor r10, r10
+    
+TextLoop:
+    mov al, [rcx + r10]       ; Wczytanie bajtu ze Ÿród³a
+    test al, al             ; Sprawdzenie, czy bajt to terminator null
+    jz EndLoop              ; Jeœli terminator null, zakoñcz pêtlê
 
-CountLoop:
-	inc r10
-	dec rdx
-	jnz CountLoop
+    ; Operacje na kodzie Base64 dla pojedynczych bajtów
+    shr al, 2               ; Pierwsze 6 bitów
+    movzx r11, al           ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
+    mov al, [r8 + r11]      ; Pobranie odpowiedniego znaku kodu Base64
+    mov [rdx + r10], al       ; Zapisanie znaku do bufora wyjœciowego
+
+
+    mov al, [rcx + r10]
+    shl al, 6
+    shr al, 2
+    inc r10
+    mov [rdx + r10], al
+    mov al, [rcx+r10]    ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
+    shr al, 4
+    add al, [rdx+r10]
+    movzx r11, al
+    mov al, [r8 + r11]
+    mov [rdx + r10], al
+
+
+    mov al, [rcx + r10]
+    shl al, 4
+    shr al, 2
+    inc r10
+    mov [rdx + r10], al
+    mov al, [rcx + r10]
+    shr al, 6
+    add al, [rdx + r10]
+    movzx r11, al
+    mov al, [r8 + r11]
+    mov [rdx + r10], al
+
+
+    mov al, [rcx + r10]
+    shl al, 2
+    shr al, 2
+    inc r10
+    movzx r11, al
+    mov al, [r8 + r11]
+    mov [rdx + r10], al
+
+
+
+
+    inc r10                 ; Przejœcie do kolejnego bajtu
+    inc r10                 ; Pomiñ dwa znaki w buforze wyjœciowym
+
+    dec r9                  ; Dekrementacja licznika
+    jnz TextLoop            ; Jeœli licznik nie jest zerowy, kontynuuj pêtlê
 
 EndLoop:
-	mov rax, r10
-	ret
-
+    mov rax, rdx        ; Return the destination pointer
+    ret
 ImageToBase64 endp
 
-
-
-Base64Encode PROC, inputString:ptr byte
-    mov rdx, inputString			; Load address of input string into RDX
-    mov rcx, OFFSET encodedOutput	; Load address of output buffer into RCX
-
-encodeLoop:
-    movzx rax, byte ptr [rdx]		; Load a byte from the input string
-    test rax, rax					; Check for null terminator
-    jz endEncodeLoop				; If null terminator is reached, exit the loop
-
-    movzx rbx, al					; Copy the byte to RBX (lower 8 bits)
-    shl rax, 16						; Shift the byte 16 bits to the left
-    shr rax, 2						; Shift right to get 6 high bits
-
-    ; Extract 6 high bits from AH using bitwise operations with AL (8-bit register)
-    mov al, ah						; Move AH to AL
-    and al, 0FCh					; Mask to keep only the 6 high bits
-
-    movzx rcx, al					; Move the result to RCX for further processing
-
-    ; Continue with your encoding logic...
-
-    ; Placeholder: Implement the rest of your Base64 encoding logic here
-
-    inc rdx							; Move to the next byte in the input string
-    inc rcx							; Move to the next position in the output buffer
-    jmp encodeLoop					; Continue encoding the string
-
-endEncodeLoop:
-    mov byte ptr [rcx], 0			; Null-terminate the output string
-    ret								; Return from the procedure
-Base64Encode ENDP
 
 
 end
