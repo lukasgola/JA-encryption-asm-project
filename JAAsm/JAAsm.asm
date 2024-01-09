@@ -58,65 +58,74 @@ ASMAdjustBrightness endp
 ; )
 
 ImageToBase64 proc
-    xor r10, r10
+    xor r10, r10                        ; Licznik dla wczytania znaku
+    xor rbx, rbx                        ; Licznik dla zapisu znaku
     
 TextLoop:
-    mov al, [rcx + r10]       ; Wczytanie bajtu ze Ÿród³a
-    test al, al             ; Sprawdzenie, czy bajt to terminator null
-    jz EndLoop              ; Jeœli terminator null, zakoñcz pêtlê
+    mov al, [rcx + r10]                 ; Wczytanie bajtu ze Ÿród³a
+    test al, al                         ; Sprawdzenie, czy bajt to terminator null
+    jz EndLoop                          ; Jeœli terminator null, zakoñcz pêtlê
 
-    ; Operacje na kodzie Base64 dla pojedynczych bajtów
-    shr al, 2               ; Pierwsze 6 bitów
-    movzx r11, al           ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
-    mov al, [r8 + r11]      ; Pobranie odpowiedniego znaku kodu Base64
-    mov [rdx + r10], al       ; Zapisanie znaku do bufora wyjœciowego
+                    
+    shr al, 2                           ; Pierwsze 6 bitów
+    movzx r11, al                       ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
+    mov al, [r8 + r11]                  ; Pobranie odpowiedniego znaku kodu Base64
+    mov [rdx + rbx], al                 ; Zapisanie znaku do bufora wyjœciowego
+    inc rbx                             ; Inkrementcja licznika zapisu
 
+                                        ; Stan licznika wczytania 0
+                                        ; Stan licznka zapisu 1
 
-    mov al, [rcx + r10]
-    shl al, 6
-    shr al, 2
-    inc r10
-    mov [rdx + r10], al
-    mov al, [rcx+r10]    ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
-    shr al, 4
-    add al, [rdx+r10]
-    movzx r11, al
-    mov al, [r8 + r11]
-    mov [rdx + r10], al
+    mov al, [rcx + r10]                 ; Ponowne wczytanie pierwszego bajtu
+    shl al, 6                           ; Przesuniecie bitowe w lewo o 6 pozycji
+    shr al, 2                           ; przesuniecie bitowe w prawo o 6 pozycji
+    inc r10                             ; Inkrementacja licznika
+    mov [rdx + rbx], al                 ; Tymaczasowe zapianie ostatnich 2 bitow do rejestru wynikowego
+    mov al, [rcx + r10]                 ; Wczytanie 2 bajtu
+    shr al, 4                           ; Przesuniecie bitowe w prawo o 4 bajty
+    add al, [rdx + rbx]                 ; Dodanie tymczasowych 2 bitow w celu uzyskania adresu znku base64
+    movzx r11, al                       ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
+    mov al, [r8 + r11]                  ; Pobranie odpowiedniego znaku kodu Base64
+    mov [rdx + rbx], al                 ; Zapisanie znaku bufora wyjsciowego do 2 bajtu
+    inc rbx
 
+                                        ; Stan licznika wczytania 1
+                                        ; Stan licznika zapisu 2
 
-    mov al, [rcx + r10]
-    shl al, 4
-    shr al, 2
-    inc r10
-    mov [rdx + r10], al
-    mov al, [rcx + r10]
-    shr al, 6
-    add al, [rdx + r10]
-    movzx r11, al
-    mov al, [r8 + r11]
-    mov [rdx + r10], al
+    mov al, [rcx + r10]                 ; Ponowne wczytanie drugiego bajtu
+    shl al, 4                           ; Przesuniecie bitowe w lewo o 4 pozycji
+    shr al, 2                           ; Przesuniecie bitowe w prawo o 2 pozycje
+    inc r10                             ; Inkrementacja licznika
+    mov [rdx + rbx], al                 ; Tymaczasowe zapianie pierwszych 4 bitów bitow do rejestru wynikowego
+    mov al, [rcx + r10]                 ; Wczytanie 3 bajtu
+    shr al, 6                           ; Przesuniêcie bitowe w prawo o 6 pozycji
+    add al, [rdx + rbx]                 ; Dodanie tymczasowych 4 bitow w celu uzyskania adresu znku base64
+    movzx r11, al                       ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
+    mov al, [r8 + r11]                  ; Pobranie odpowiedniego znaku kodu Base64
+    mov [rdx + rbx], al                 ; Zapisanie znaku bufora wyjsciowego do 2 bajtu
+    inc rbx
+                                        ; Stan licznika wczytania 2
+                                        ; Stan licznika zapisu 3
 
+    mov al, [rcx + r10]                 ; Ponowne wczytanie trzeciego bajtu
+    shl al, 2                           ; Przesuniecie bitowe w lewo o 2
+    shr al, 2                           ; Przesuniecie bitowe w prawo o 2
+    movzx r11, al                       ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
+    mov al, [r8 + r11]                  ; Pobranie odpowiedniego znaku kodu Base64
+    mov [rdx + rbx], al                 ; Zapisanie znaku bufora wyjsciowego do 3 bajtu
 
-    mov al, [rcx + r10]
-    shl al, 2
-    shr al, 2
-    inc r10
-    movzx r11, al
-    mov al, [r8 + r11]
-    mov [rdx + r10], al
+                                        ; Stan licznika wczytania 2
+                                        ; Stan licznika zapisu 3
 
+    inc r10                             ; Przejœcie do kolejnego bajtu dla wczytania
+    inc rbx                             ; Przejœcie do kolejnego bajtu dla zapisu
 
-
-
-    inc r10                 ; Przejœcie do kolejnego bajtu
-    inc r10                 ; Pomiñ dwa znaki w buforze wyjœciowym
-
-    dec r9                  ; Dekrementacja licznika
-    jnz TextLoop            ; Jeœli licznik nie jest zerowy, kontynuuj pêtlê
+    sub r9, 3
+    jnz TextLoop                        ; Jeœli licznik nie jest zerowy, kontynuuj pêtlê
 
 EndLoop:
-    mov rax, rdx        ; Return the destination pointer
+    
+    mov rax, rbx                        ; Return the destination pointer
     ret
 ImageToBase64 endp
 

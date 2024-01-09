@@ -27,7 +27,7 @@ namespace Encryption
         );
 
         [DllImport(@"C:\Users\atomo\Documents\GitHub\JA-encryption-asm-project\x64\Debug\JAAsm.dll")]
-        public static extern string ImageToBase64(
+        public static extern int ImageToBase64(
             IntPtr textOriginal,
             IntPtr textOutPut,
             IntPtr base64,
@@ -69,9 +69,8 @@ namespace Encryption
         private void ImageToBase64(object sender, EventArgs e)
         {
 
-            string yourString = "HEL";
+            string yourString = "HELHEL";
             byte[] stringBytes = Encoding.ASCII.GetBytes(yourString);
-
             IntPtr input = Marshal.AllocHGlobal(stringBytes.Length);
             Marshal.Copy(stringBytes, 0, input, stringBytes.Length);
 
@@ -83,15 +82,28 @@ namespace Encryption
 
 
             // Provide output buffer and text size as needed
-            IntPtr output = Marshal.AllocHGlobal(stringBytes.Length);
-            int textSizeInBytes = stringBytes.Length;
+            string test = "HELHELHELHELHELHELHELHEL";
+            byte[] testBytes = Encoding.ASCII.GetBytes(test);
+            string outputString = Convert.ToBase64String(testBytes);
 
-            string result = ImageToBase64(input, output, base_64, textSizeInBytes);
+            byte[] outputBytes = Encoding.ASCII.GetBytes(outputString);
+            IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
+            Marshal.Copy(outputBytes, 0, output, outputBytes.Length);
+
+            string outputStringResult = Marshal.PtrToStringAnsi(output);
+            Console.WriteLine("Base64 w C#: " + outputStringResult);
+
+
+            int base64_lenght = ImageToBase64(input, output, base_64, stringBytes.Length);
+            Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
 
             Marshal.FreeHGlobal(input);
             Marshal.FreeHGlobal(base_64);
+            Marshal.FreeHGlobal(output);
 
-            MessageBox.Show(result.ToString());
+            string outputStringResult2 = Marshal.PtrToStringAnsi(output);
+
+            Console.WriteLine("Wynik: " + outputStringResult2);
 
             /*
             string yourString = "Your string here";
