@@ -98,6 +98,14 @@ namespace Encryption
 
                     image.Save(memoryStream, ImageFormat.Bmp); // Możesz wybrać odpowiedni format obrazu
                     byte[] imageBytes = memoryStream.ToArray();
+
+                    string path = "C:\\Users\\atomo\\Documents\\GitHub\\JA-encryption-asm-project\\Encryption\\C#.txt";
+                    int[] linesToWrite = imageBytes.Select(n => (int)n).ToArray();
+                    string[] stringArray = linesToWrite.Select(n => n.ToString()).ToArray();
+
+                    // Zapis tablicy stringów do pliku
+                    File.WriteAllLines(path, stringArray);
+
                     string base64String = Convert.ToBase64String(imageBytes);
                     textBox1.Text = base64String;
 
@@ -121,6 +129,17 @@ namespace Encryption
             IntPtr scan0 = bitmapData0.Scan0;
             int imageSizeInBytes = Math.Abs(bitmapData0.Stride) * inputImage.Height;
 
+            // Przetworzenie obrazu na tablicę bajtów (dane z poszczególnych kanałów kolorów)
+            MemoryStream memoryStream = new MemoryStream();
+            inputImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
+            byte[] imageBytes = memoryStream.ToArray();
+
+            string path = "C:\\Users\\atomo\\Documents\\GitHub\\JA-encryption-asm-project\\Encryption\\asm.txt";
+            int[] linesToWrite = imageBytes.Select(n => (int)n).ToArray();
+            string[] stringArray = linesToWrite.Select(n => n.ToString()).ToArray();
+
+            // Zapis tablicy stringów do pliku
+            File.WriteAllLines(path, stringArray);
 
             System.Drawing.Imaging.PixelFormat formatPikseli = inputImage.PixelFormat;
 

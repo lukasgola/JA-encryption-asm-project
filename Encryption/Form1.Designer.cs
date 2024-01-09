@@ -56,7 +56,7 @@
             // 
             this.pictureBox.Location = new System.Drawing.Point(52, 90);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(100, 100);
+            this.pictureBox.Size = new System.Drawing.Size(3, 3);
             this.pictureBox.TabIndex = 5;
             this.pictureBox.TabStop = false;
             // 
