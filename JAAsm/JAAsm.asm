@@ -125,7 +125,7 @@ TextLoop:
 
 EndLoop:
     
-    mov rax, rbx                        ; Return the destination pointer
+    mov rax, r10                        ; Return the destination pointer
     ret
 ImageToBase64 endp
 

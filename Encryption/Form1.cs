@@ -56,113 +56,130 @@ namespace Encryption
                 {
                     // Tutaj możesz wykonać działania na wybranym obrazie, np. załadować go do kontrolki PictureBox
                     string selectedImagePath = openFileDialog.FileName;
+                    System.Drawing.Image newImage = System.Drawing.Image.FromFile(selectedImagePath);
                     Bitmap originalImage = new Bitmap(selectedImagePath);
                     Bitmap resizedImage = new Bitmap(originalImage, pictureBox.Width, pictureBox.Height);
 
+                    Bitmap newBitmap = ConvertTo24bpp(newImage);
+
+
+                    
                     // Przypisanie przeskalowanego obrazu do PictureBox
-                    pictureBox.Image = resizedImage;
-                    mainImage = new Bitmap(resizedImage);
+                    pictureBox.Image = newBitmap;
+                    mainImage = newBitmap;
+
+                    System.Drawing.Imaging.PixelFormat formatPikseli = mainImage.PixelFormat;
+
+                    Console.WriteLine($"Głębia bitowa obrazu: {System.Drawing.Image.GetPixelFormatSize(formatPikseli)} bitów na piksel");
                 }
             }
+        }
+
+        public Bitmap ConvertTo24bpp(System.Drawing.Image img)
+        {
+            var bmp = new Bitmap(pictureBox.Width, pictureBox.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            using (var gr = Graphics.FromImage(bmp))
+                gr.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
+            return bmp;
         }
 
         private void ImageToBase64(object sender, EventArgs e)
         {
 
-            string yourString = "HELHEL";
-            byte[] stringBytes = Encoding.ASCII.GetBytes(yourString);
-            IntPtr input = Marshal.AllocHGlobal(stringBytes.Length);
-            Marshal.Copy(stringBytes, 0, input, stringBytes.Length);
+
+            if (pictureBox.Image != null)
+            {
+
+                // Konwersja obrazu na format Base64
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+
+                    Bitmap image = ConvertTo24bpp(pictureBox.Image);
+
+                    image.Save(memoryStream, ImageFormat.Bmp); // Możesz wybrać odpowiedni format obrazu
+                    byte[] imageBytes = memoryStream.ToArray();
+                    string base64String = Convert.ToBase64String(imageBytes);
+                    textBox1.Text = base64String;
+
+                    string base64StringASM = returnBase64FromImage(base64String);
+                    textBox2.Text = base64StringASM;
+
+                }
+            } else
+            {
+                MessageBox.Show("No image given.");
+            }
+            
+            
+        }
+
+        private string returnBase64FromImage(string base64String)
+        {
+            //Dane wejsciowe
+            Bitmap inputImage = ConvertTo24bpp(pictureBox.Image);
+            BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, inputImage.Width, inputImage.Height), ImageLockMode.ReadWrite, inputImage.PixelFormat);
+            IntPtr scan0 = bitmapData0.Scan0;
+            int imageSizeInBytes = Math.Abs(bitmapData0.Stride) * inputImage.Height;
 
 
+            System.Drawing.Imaging.PixelFormat formatPikseli = inputImage.PixelFormat;
+
+            Console.WriteLine($"Głębia bitowa obrazu ASM: {System.Drawing.Image.GetPixelFormatSize(formatPikseli)} bitów na piksel");
+
+            //Przygotowanie pamieci do wyniku
+            byte[] outputBytes = Encoding.ASCII.GetBytes(base64String);
+            IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
+            int outputSize = outputBytes.Length;
+            //Marshal.Copy(outputBytes, 0, output, outputSize);
+
+            Console.WriteLine("imageSizeinBytes: " + imageSizeInBytes);
+            Console.WriteLine("outputSize: " + outputSize);
+
+            //Tablica base64
             string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
             byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
             IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
             Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
 
 
-            // Provide output buffer and text size as needed
-            string test = "HELHELHELHELHELHELHELHEL";
-            byte[] testBytes = Encoding.ASCII.GetBytes(test);
-            string outputString = Convert.ToBase64String(testBytes);
-
-            byte[] outputBytes = Encoding.ASCII.GetBytes(outputString);
-            IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
-            Marshal.Copy(outputBytes, 0, output, outputBytes.Length);
-
-            string outputStringResult = Marshal.PtrToStringAnsi(output);
-            Console.WriteLine("Base64 w C#: " + outputStringResult);
-
-
-            int base64_lenght = ImageToBase64(input, output, base_64, stringBytes.Length);
+            int base64_lenght = ImageToBase64(scan0, output, base_64, imageSizeInBytes);
             Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
 
-            Marshal.FreeHGlobal(input);
             Marshal.FreeHGlobal(base_64);
-            Marshal.FreeHGlobal(output);
-
-            string outputStringResult2 = Marshal.PtrToStringAnsi(output);
-
-            Console.WriteLine("Wynik: " + outputStringResult2);
-
-            /*
-            string yourString = "Your string here";
-            byte[] bytes = Encoding.ASCII.GetBytes(yourString);
-            IntPtr stringPtr = Marshal.AllocHGlobal(bytes.Length);
-            Marshal.Copy(bytes, 0, stringPtr, bytes.Length);
-
-            string output = "";
-            byte[] bytes2 = Encoding.ASCII.GetBytes(output);
-            IntPtr outputPtr = Marshal.AllocHGlobal(100);
-            Marshal.Copy(bytes2, 0, outputPtr, bytes2.Length);
-
-            string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            byte[] bytes3 = Encoding.ASCII.GetBytes(base64);
-            IntPtr basePtr = Marshal.AllocHGlobal(bytes3.Length);
-            Marshal.Copy(bytes3, 0, basePtr, bytes3.Length);
-
-            ulong result1 = base64_encode(stringPtr, (ulong)yourString.Length, outputPtr, basePtr);
-            Console.WriteLine($"Result: {result1}"); // Handle the result accordingly
-
-            Marshal.FreeHGlobal(stringPtr);
-            Marshal.FreeHGlobal(outputPtr);
-            Marshal.FreeHGlobal(basePtr);
-
             
-            System.Drawing.Image image = pictureBox.Image;
 
-            Bitmap inputImage = new Bitmap(mainImage);
-            BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, inputImage.Width, inputImage.Height), ImageLockMode.ReadWrite, inputImage.PixelFormat);
-            IntPtr scan0 = bitmapData0.Scan0;
-            int imageSizeInBytes = Math.Abs(bitmapData0.Stride) * inputImage.Height;
-            int result = ImageToBase64(scan0, imageSizeInBytes);
-            MessageBox.Show(result.ToString());
+            string outputStringResult = Marshal.PtrToStringAnsi(output);
+            return outputStringResult;
+        }
 
-            
-            if (image != null)
-            {
-                // Konwersja obrazu na format Base64
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    image.Save(memoryStream, ImageFormat.Jpeg); // Możesz wybrać odpowiedni format obrazu
-                    byte[] imageBytes = memoryStream.ToArray();
-                    string base64String = Convert.ToBase64String(imageBytes);
+        private string returnBase64FromText(string yourString, IntPtr output, int inputSize)
+        {
+            //Dane wejsciowe
+            byte[] stringBytes = Encoding.ASCII.GetBytes(yourString);
+            IntPtr input = Marshal.AllocHGlobal(stringBytes.Length);
+            Marshal.Copy(stringBytes, 0, input, stringBytes.Length);
 
-                    // Tutaj możesz wykorzystać ciąg base64String do dalszych działań, np. zapisu do pliku lub przesyłki przez sieć
-                    // Możesz również wyświetlić ten ciąg w TextBox lub innym elemencie UI w aplikacji
-                    textBox1.Text = base64String;
-                }
-            } else
-            {
-                MessageBox.Show("No image given.");
-            }
-            */
+            //Tablica base64
+            string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+            byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
+            IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
+            Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
+
+
+            int base64_lenght = ImageToBase64(input, output, base_64, inputSize);
+            Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
+
+            Marshal.FreeHGlobal(base_64);
+
+
+            string outputStringResult = Marshal.PtrToStringAnsi(output);
+            return outputStringResult;
         }
 
         private void CopyOutput(object sender, EventArgs e)
         {
 
-            if(textBox1.Text != "")
+            if (textBox1.Text != "")
             {
                 // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
@@ -179,8 +196,27 @@ namespace Encryption
             {
                 MessageBox.Show("No text given.");
             }
+        }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (textBox2.Text != "")
+            {
+                // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
+                // Pobranie tekstu z TextBox
+                string textToCopy = textBox2.Text;
+
+                // Kopiowanie tekstu do schowka
+                Clipboard.SetText(textToCopy);
+
+                // Komunikat potwierdzający skopiowanie tekstu
+                MessageBox.Show("Text was copied to the clipboard.");
+            }
+            else
+            {
+                MessageBox.Show("No text given.");
+            }
         }
 
         // Funkcja do dekodowania ciągu Base64 na obraz
@@ -257,5 +293,7 @@ namespace Encryption
             }
             
         }
+
+        
     }
 }

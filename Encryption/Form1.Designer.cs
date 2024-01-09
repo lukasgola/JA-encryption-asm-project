@@ -35,6 +35,8 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.button5 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
@@ -54,7 +56,7 @@
             // 
             this.pictureBox.Location = new System.Drawing.Point(52, 90);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(400, 200);
+            this.pictureBox.Size = new System.Drawing.Size(100, 100);
             this.pictureBox.TabIndex = 5;
             this.pictureBox.TabStop = false;
             // 
@@ -107,11 +109,31 @@
             this.trackBar1.Value = 255;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(702, 419);
+            this.textBox2.Multiline = true;
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(400, 200);
+            this.textBox2.TabIndex = 11;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(702, 646);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(150, 40);
+            this.button5.TabIndex = 12;
+            this.button5.Text = "Copy text";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1157, 440);
+            this.ClientSize = new System.Drawing.Size(1157, 760);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -136,6 +158,8 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Button button5;
     }
 }
 
