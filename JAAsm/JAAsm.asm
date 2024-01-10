@@ -63,10 +63,7 @@ ImageToBase64 proc
     
 TextLoop:
     mov al, [rcx + r10]                 ; Wczytanie bajtu ze Ÿród³a
-    ;test al, al                         ; Sprawdzenie, czy bajt to terminator null
-    ;jz EndLoop                          ; Jeœli terminator null, zakoñcz pêtlê
 
-                    
     shr al, 2                           ; Pierwsze 6 bitów
     movzx r11, al                       ; Skopiowanie do 64-bitowego rejestru, aby unikn¹æ problemów z rozszerzaniem znaku
     mov al, [r8 + r11]                  ; Pobranie odpowiedniego znaku kodu Base64
@@ -124,11 +121,8 @@ TextLoop:
     jnz TextLoop                        ; Jeœli licznik nie jest zerowy, kontynuuj pêtlê
 
 EndLoop:
-    
-    mov rax, r10                        ; Return the destination pointer
+    mov rax, rbx                        ; Return the destination pointer
     ret
 ImageToBase64 endp
-
-
 
 end

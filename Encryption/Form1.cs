@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -37,6 +38,8 @@ namespace Encryption
 
         public Bitmap mainImage;
 
+        public string base64String = "";
+        public string base64Asm = " ";
 
         public Form1()
         {
@@ -89,47 +92,28 @@ namespace Encryption
 
             if (pictureBox.Image != null)
             {
+                Stopwatch stopwatchC = new Stopwatch();
+                stopwatchC.Start();
+                Bitmap image = (Bitmap)pictureBox.Image;
 
-                // Konwersja obrazu na format Base64
-                using (MemoryStream memoryStream = new MemoryStream())
+                
+                // Konwersja obiektu Bitmap na ciąg bajtów (array of bytes)
+                byte[] imageBytes;
+                using (MemoryStream stream = new MemoryStream())
                 {
-
-                    Bitmap image = ConvertTo24bpp(pictureBox.Image);
-
-                    image.Save(memoryStream, ImageFormat.Bmp); // Możesz wybrać odpowiedni format obrazu
-                    byte[] imageBytes = memoryStream.ToArray();
-
-                    string path = "C:\\Users\\atomo\\Documents\\GitHub\\JA-encryption-asm-project\\Encryption\\C#.txt";
-                    int[] linesToWrite = imageBytes.Select(n => (int)n).ToArray();
-                    string[] stringArray = linesToWrite.Select(n => n.ToString()).ToArray();
-
-                    // Zapis tablicy stringów do pliku
-                    File.WriteAllLines(path, stringArray);
-
-                    /*
-                    char[] charArray = Encoding.ASCII.GetChars(imageBytes);
-
-                    string test1 = "";
-
-                    for (int i = 0; i < charArray.Length; i++)
-                    {
-                        test1 += charArray[i];
-                    }
-                    string byteValue = Convert.ToString((int)test1[0], 2).PadLeft(16, '0');
-
-
-                    Console.WriteLine("Wynikowy tekst C#: " + sizeof(byte));
-                    */
-
-
-
-                    string base64String = Convert.ToBase64String(imageBytes);
-                    textBox1.Text = base64String;
-
-                    string base64StringASM = returnBase64FromImage(base64String);
-                    textBox2.Text = base64StringASM;
-
+                    image.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp); // Zmień format obrazu, jeśli nie jest w formacie JPEG
+                    imageBytes = stream.ToArray();
                 }
+
+                // Konwersja ciągu bajtów na Base64
+                base64String = Convert.ToBase64String(imageBytes);
+
+                Console.WriteLine("Długosc tekstu wynikowego base64: " + base64String.Length);
+                stopwatchC.Stop();
+
+                //textBox1.Text = base64String;
+                label3.Text = stopwatchC.ElapsedMilliseconds + " ms";
+
             } else
             {
                 MessageBox.Show("No image given.");
@@ -138,118 +122,84 @@ namespace Encryption
             
         }
 
-        private string returnBase64FromImage(string base64String)
+        private string returnBase64FromImage(int outputSize)
         {
-            //Dane wejsciowe
+            //Kowertowanie obrazu wejsciowego na 24-bitowa bitmape
             Bitmap inputImage = ConvertTo24bpp(pictureBox.Image);
-            BitmapData bitmapData0 = inputImage.LockBits(new Rectangle(0, 0, inputImage.Width, inputImage.Height), ImageLockMode.ReadWrite, inputImage.PixelFormat);
-            IntPtr scan0 = bitmapData0.Scan0;
-            int imageSizeInBytes = Math.Abs(bitmapData0.Stride) * inputImage.Height;
 
             // Przetworzenie obrazu na tablicę bajtów (dane z poszczególnych kanałów kolorów)
             MemoryStream memoryStream = new MemoryStream();
             inputImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
             byte[] imageBytes = memoryStream.ToArray();
 
-            string path = "C:\\Users\\atomo\\Documents\\GitHub\\JA-encryption-asm-project\\Encryption\\asm.txt";
-            int[] linesToWrite = imageBytes.Select(n => (int)n).ToArray();
-
+            //Przepisywanie bajtów do tablicy z znakami
             char[] charArray = Encoding.ASCII.GetChars(imageBytes);
-
             string inputString = "";
 
+            //Tworzenie ciaglego stringa z tablicy znakow
             for (int i = 0; i < charArray.Length; i++)
             {
+                //string newString  = ((int)charArray[i]).ToString("X4");
+                //string newStringGood = newString[2].ToString() + newString[3];
+                //inputString += newStringGood;
+
                 inputString += charArray[i];
+
             }
 
-            
-            Console.WriteLine("Wynikowy tekst byte: " + inputString);
 
-            string[] stringArray = linesToWrite.Select(n => n.ToString()).ToArray();
+            //Console.WriteLine("Input string ASM: " + inputString);
 
-            // Zapis tablicy stringów do pliku
-            //File.WriteAllLines(path, test1);
-            File.WriteAllBytes(path, imageBytes);
-
-            System.Drawing.Imaging.PixelFormat formatPikseli = inputImage.PixelFormat;
-
-            Console.WriteLine($"Głębia bitowa obrazu ASM: {System.Drawing.Image.GetPixelFormatSize(formatPikseli)} bitów na piksel");
-
-            //Przygotowanie pamieci do wyniku
-            //byte[] outputBytes = Encoding.ASCII.GetBytes(base64String);
-            //IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
-            //int outputSize = outputBytes.Length;
-            //Marshal.Copy(outputBytes, 0, output, outputSize);
-
-            //Console.WriteLine("imageSizeinBytes: " + imageSizeInBytes);
-            //Console.WriteLine("outputSize: " + outputSize);
-
-            //Tablica base64
-            //string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-            //byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
-            //IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
-            //Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
-
-
-            //int base64_lenght = ImageToBase64(scan0, output, base_64, imageSizeInBytes);
-            //Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
-
-            //Marshal.FreeHGlobal(base_64);
-            
-
-            //string outputStringResult = Marshal.PtrToStringAnsi(output);
-
-            string textResult = returnBase64FromText(inputString, inputString.Length, base64String);
-
-            Console.WriteLine("Wynik ostateczny: " + textResult);
+            //Uruchamianie funckji
+            string textResult = returnBase64FromText(inputString, inputString.Length, outputSize);
 
             return textResult;
         }
 
-        private string returnBase64FromText(string yourString, int inputSize, string base64String)
+        private string returnBase64FromText(string yourString, int inputSize, int outputSize)
         {
-            //Dane wejsciowe
+            //Alokowanie pamieci na Dane wejsciowe
             byte[] stringBytes = Encoding.ASCII.GetBytes(yourString);
             IntPtr input = Marshal.AllocHGlobal(stringBytes.Length);
             Marshal.Copy(stringBytes, 0, input, stringBytes.Length);
 
-            //Przygotowanie pamieci do wyniku
-            byte[] outputBytes = Encoding.ASCII.GetBytes(base64String);
-            IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
+            
+            //Alokowanie pamiecia na Dane wyjsciowe
+            IntPtr output = Marshal.AllocHGlobal(outputSize);
 
-            //Tablica base64
+            //Alokowanie pamieci na Tablica base64
             string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
             byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
             IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
             Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
 
-
+            //Uruchomienie funkcji
             int base64_lenght = ImageToBase64(input, output, base_64, inputSize);
-            Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
+            //Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
 
-            Marshal.FreeHGlobal(base_64);
-
-
+            
             string outputStringResult = Marshal.PtrToStringAnsi(output);
+
+            //Zwolnienie zaalokowanej pamieci
+            Marshal.FreeHGlobal(input);
+            Marshal.FreeHGlobal(base_64);
+            Marshal.FreeHGlobal(output);
+
             return outputStringResult;
         }
 
         private void CopyOutput(object sender, EventArgs e)
         {
 
-            if (textBox1.Text != "")
+            if (base64String != "")
             {
                 // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
                 // Pobranie tekstu z TextBox
-                string textToCopy = textBox1.Text;
+                string textToCopy = base64String;
 
                 // Kopiowanie tekstu do schowka
                 Clipboard.SetText(textToCopy);
-
-                // Komunikat potwierdzający skopiowanie tekstu
-                MessageBox.Show("Text was copied to the clipboard.");
             }
             else
             {
@@ -257,20 +207,18 @@ namespace Encryption
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void CopyOutputASM(object sender, EventArgs e)
         {
-            if (textBox2.Text != "")
+            if (base64Asm != "")
             {
                 // Zakładając, że masz kontrolkę TextBox o nazwie textBox1
 
                 // Pobranie tekstu z TextBox
-                string textToCopy = textBox2.Text;
+                string textToCopy = base64Asm;
 
                 // Kopiowanie tekstu do schowka
                 Clipboard.SetText(textToCopy);
 
-                // Komunikat potwierdzający skopiowanie tekstu
-                MessageBox.Show("Text was copied to the clipboard.");
             }
             else
             {
@@ -300,10 +248,10 @@ namespace Encryption
         private void Base64ToImage(object sender, EventArgs e)
         {
 
-            if (textBox1.Text != "")
+            if (base64String != "")
             {
                 // Przykładowe użycie funkcji ConvertBase64ToImage
-                string base64String = textBox1.Text; // Zastąp tym rzeczywistym ciągiem Base64
+                //string base64String = textBox1.Text; // Zastąp tym rzeczywistym ciągiem Base64
                 System.Drawing.Image imageFromBase64 = ConvertBase64ToImage(base64String);
 
                 // Teraz możesz użyć obiektu 'imageFromBase64', np. wyświetlić go w kontrolce PictureBox
@@ -353,6 +301,45 @@ namespace Encryption
             
         }
 
-        
+        private void ImageToBase64ASM(object sender, EventArgs e)
+        {
+
+            
+
+            Stopwatch stopwatchASM = new Stopwatch();
+            stopwatchASM.Start();
+
+            string base64StringASM = returnBase64FromImage(base64String.Length);
+
+            
+
+
+            base64Asm = base64StringASM.Substring(0, base64StringASM.Length - 7);
+
+            Console.WriteLine("Długosc tekstu ASM " + base64StringASM.Length);
+
+            stopwatchASM.Stop();
+
+            //textBox2.Text = base64Asm;
+            label4.Text = stopwatchASM.ElapsedMilliseconds + " ms";
+        }
+
+        private void TextToBase64ASM(object sender, EventArgs e)
+        {
+            if (base64Asm != "")
+            {
+                // Przykładowe użycie funkcji ConvertBase64ToImage
+                string base64String = base64Asm; // Zastąp tym rzeczywistym ciągiem Base64
+                System.Drawing.Image imageFromBase64 = ConvertBase64ToImage(base64String);
+
+                // Teraz możesz użyć obiektu 'imageFromBase64', np. wyświetlić go w kontrolce PictureBox
+                pictureBox.Image = imageFromBase64;
+            }
+            else
+            {
+                MessageBox.Show("No text given.");
+            }
+        }
+
     }
 }
