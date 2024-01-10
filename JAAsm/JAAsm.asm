@@ -74,8 +74,8 @@ TextLoop:
                                         ; Stan licznka zapisu 1
 
     mov al, [rcx + r10]                 ; Ponowne wczytanie pierwszego bajtu
-    shl al, 6                           ; Przesuniecie bitowe w lewo o 6 pozycji
-    shr al, 2                           ; przesuniecie bitowe w prawo o 6 pozycji
+    and al, 3                           ; Wyzerowanie bitów 8-
+    shl al, 4                           ; przesuniecie bitowe w prawo o 6 pozycji
     inc r10                             ; Inkrementacja licznika
     mov [rdx + rbx], al                 ; Tymaczasowe zapianie ostatnich 2 bitow do rejestru wynikowego
     mov al, [rcx + r10]                 ; Wczytanie 2 bajtu
@@ -90,8 +90,8 @@ TextLoop:
                                         ; Stan licznika zapisu 2
 
     mov al, [rcx + r10]                 ; Ponowne wczytanie drugiego bajtu
-    shl al, 4                           ; Przesuniecie bitowe w lewo o 4 pozycji
-    shr al, 2                           ; Przesuniecie bitowe w prawo o 2 pozycje
+    and al, 15
+    shl al, 2                           ; Przesuniecie bitowe w prawo o 2 pozycje
     inc r10                             ; Inkrementacja licznika
     mov [rdx + rbx], al                 ; Tymaczasowe zapianie pierwszych 4 bitów bitow do rejestru wynikowego
     mov al, [rcx + r10]                 ; Wczytanie 3 bajtu

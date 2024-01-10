@@ -124,31 +124,14 @@ namespace Encryption
 
         private string returnBase64FromImage(int outputSize)
         {
-            //Kowertowanie obrazu wejsciowego na 24-bitowa bitmape
-            Bitmap inputImage = ConvertTo24bpp(pictureBox.Image);
 
             // Przetworzenie obrazu na tablicę bajtów (dane z poszczególnych kanałów kolorów)
             MemoryStream memoryStream = new MemoryStream();
-            inputImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
+            mainImage.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
             byte[] imageBytes = memoryStream.ToArray();
 
             //Przepisywanie bajtów do tablicy z znakami
-            char[] charArray = Encoding.ASCII.GetChars(imageBytes);
-            string inputString = "";
-
-            //Tworzenie ciaglego stringa z tablicy znakow
-            for (int i = 0; i < charArray.Length; i++)
-            {
-                //string newString  = ((int)charArray[i]).ToString("X4");
-                //string newStringGood = newString[2].ToString() + newString[3];
-                //inputString += newStringGood;
-
-                inputString += charArray[i];
-
-            }
-
-
-            //Console.WriteLine("Input string ASM: " + inputString);
+            string inputString = Encoding.ASCII.GetString(imageBytes);
 
             //Uruchamianie funckji
             string textResult = returnBase64FromText(inputString, inputString.Length, outputSize);
