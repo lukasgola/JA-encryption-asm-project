@@ -39,7 +39,7 @@ namespace Encryption
         public Bitmap mainImage;
 
         public string base64String = "";
-        public string base64Asm = " ";
+        public string base64Asm = "";
 
         public Form1()
         {
@@ -86,40 +86,45 @@ namespace Encryption
             return bmp;
         }
 
-        private void ImageToBase64(object sender, EventArgs e)
+        private void ImageToBase64Click(object sender, EventArgs e)
         {
-
-
             if (pictureBox.Image != null)
             {
                 Stopwatch stopwatchC = new Stopwatch();
                 stopwatchC.Start();
-                Bitmap image = (Bitmap)pictureBox.Image;
 
-                
-                // Konwersja obiektu Bitmap na ciąg bajtów (array of bytes)
-                byte[] imageBytes;
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    image.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp); // Zmień format obrazu, jeśli nie jest w formacie JPEG
-                    imageBytes = stream.ToArray();
-                }
+                ImageToBase64();
 
-                // Konwersja ciągu bajtów na Base64
-                base64String = Convert.ToBase64String(imageBytes);
-
-                Console.WriteLine("Długosc tekstu wynikowego base64: " + base64String.Length);
                 stopwatchC.Stop();
 
                 //textBox1.Text = base64String;
                 label3.Text = stopwatchC.ElapsedMilliseconds + " ms";
 
-            } else
+            }
+            else
             {
                 MessageBox.Show("No image given.");
             }
-            
-            
+        }
+
+
+        private void ImageToBase64()
+        {
+            Bitmap image = (Bitmap)pictureBox.Image;
+
+
+            // Konwersja obiektu Bitmap na ciąg bajtów (array of bytes)
+            byte[] imageBytes;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                image.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
+                imageBytes = stream.ToArray();
+            }
+
+            // Konwersja ciągu bajtów na Base64
+            base64String = Convert.ToBase64String(imageBytes);
+
+            Console.WriteLine("Długosc tekstu wynikowego base64: " + base64String.Length);
         }
 
         private string returnBase64FromImage(int outputSize)
@@ -156,11 +161,18 @@ namespace Encryption
             IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
             Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
 
+            Stopwatch stopwatchASM = new Stopwatch();
+            stopwatchASM.Start();
+
             //Uruchomienie funkcji
             int base64_lenght = ImageToBase64(input, output, base_64, inputSize);
             //Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
 
-            
+            stopwatchASM.Stop();
+
+            //textBox2.Text = base64Asm;
+            label4.Text = stopwatchASM.ElapsedMilliseconds + " ms";
+
             string outputStringResult = Marshal.PtrToStringAnsi(output);
 
             //Zwolnienie zaalokowanej pamieci
@@ -211,7 +223,7 @@ namespace Encryption
 
         // Funkcja do dekodowania ciągu Base64 na obraz
         private System.Drawing.Image ConvertBase64ToImage(string base64String)
-        {;
+        {
 
             // Konwersja ciągu Base64 na tablicę bajtów
             byte[] imageBytes = Convert.FromBase64String(base64String);
@@ -237,8 +249,10 @@ namespace Encryption
                 //string base64String = textBox1.Text; // Zastąp tym rzeczywistym ciągiem Base64
                 System.Drawing.Image imageFromBase64 = ConvertBase64ToImage(base64String);
 
+                Bitmap newBitmap = ConvertTo24bpp(imageFromBase64);
+
                 // Teraz możesz użyć obiektu 'imageFromBase64', np. wyświetlić go w kontrolce PictureBox
-                pictureBox.Image = imageFromBase64;
+                pictureBox.Image = newBitmap;
             } else
             {
                 MessageBox.Show("No text given.");
@@ -287,24 +301,24 @@ namespace Encryption
         private void ImageToBase64ASM(object sender, EventArgs e)
         {
 
+            if (pictureBox.Image != null)
+            {
+                ImageToBase64();
+
+                string base64StringASM = returnBase64FromImage(base64String.Length);
+
+                base64Asm = base64StringASM.Substring(0, base64StringASM.Length - 7);
+
+                Console.WriteLine("Długosc tekstu ASM " + base64StringASM.Length);
+
+            }
+            else
+            {
+                MessageBox.Show("No image given.");
+            }
+
             
 
-            Stopwatch stopwatchASM = new Stopwatch();
-            stopwatchASM.Start();
-
-            string base64StringASM = returnBase64FromImage(base64String.Length);
-
-            
-
-
-            base64Asm = base64StringASM.Substring(0, base64StringASM.Length - 7);
-
-            Console.WriteLine("Długosc tekstu ASM " + base64StringASM.Length);
-
-            stopwatchASM.Stop();
-
-            //textBox2.Text = base64Asm;
-            label4.Text = stopwatchASM.ElapsedMilliseconds + " ms";
         }
 
         private void TextToBase64ASM(object sender, EventArgs e)
@@ -314,9 +328,9 @@ namespace Encryption
                 // Przykładowe użycie funkcji ConvertBase64ToImage
                 string base64String = base64Asm; // Zastąp tym rzeczywistym ciągiem Base64
                 System.Drawing.Image imageFromBase64 = ConvertBase64ToImage(base64String);
-
+                Bitmap newBitmap = ConvertTo24bpp(imageFromBase64);
                 // Teraz możesz użyć obiektu 'imageFromBase64', np. wyświetlić go w kontrolce PictureBox
-                pictureBox.Image = imageFromBase64;
+                pictureBox.Image = newBitmap;
             }
             else
             {
