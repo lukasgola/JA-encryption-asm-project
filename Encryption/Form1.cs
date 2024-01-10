@@ -106,6 +106,23 @@ namespace Encryption
                     // Zapis tablicy stringów do pliku
                     File.WriteAllLines(path, stringArray);
 
+                    /*
+                    char[] charArray = Encoding.ASCII.GetChars(imageBytes);
+
+                    string test1 = "";
+
+                    for (int i = 0; i < charArray.Length; i++)
+                    {
+                        test1 += charArray[i];
+                    }
+                    string byteValue = Convert.ToString((int)test1[0], 2).PadLeft(16, '0');
+
+
+                    Console.WriteLine("Wynikowy tekst C#: " + sizeof(byte));
+                    */
+
+
+
                     string base64String = Convert.ToBase64String(imageBytes);
                     textBox1.Text = base64String;
 
@@ -136,47 +153,70 @@ namespace Encryption
 
             string path = "C:\\Users\\atomo\\Documents\\GitHub\\JA-encryption-asm-project\\Encryption\\asm.txt";
             int[] linesToWrite = imageBytes.Select(n => (int)n).ToArray();
+
+            char[] charArray = Encoding.ASCII.GetChars(imageBytes);
+
+            string inputString = "";
+
+            for (int i = 0; i < charArray.Length; i++)
+            {
+                inputString += charArray[i];
+            }
+
+            
+            Console.WriteLine("Wynikowy tekst byte: " + inputString);
+
             string[] stringArray = linesToWrite.Select(n => n.ToString()).ToArray();
 
             // Zapis tablicy stringów do pliku
-            File.WriteAllLines(path, stringArray);
+            //File.WriteAllLines(path, test1);
+            File.WriteAllBytes(path, imageBytes);
 
             System.Drawing.Imaging.PixelFormat formatPikseli = inputImage.PixelFormat;
 
             Console.WriteLine($"Głębia bitowa obrazu ASM: {System.Drawing.Image.GetPixelFormatSize(formatPikseli)} bitów na piksel");
 
             //Przygotowanie pamieci do wyniku
-            byte[] outputBytes = Encoding.ASCII.GetBytes(base64String);
-            IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
-            int outputSize = outputBytes.Length;
+            //byte[] outputBytes = Encoding.ASCII.GetBytes(base64String);
+            //IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
+            //int outputSize = outputBytes.Length;
             //Marshal.Copy(outputBytes, 0, output, outputSize);
 
-            Console.WriteLine("imageSizeinBytes: " + imageSizeInBytes);
-            Console.WriteLine("outputSize: " + outputSize);
+            //Console.WriteLine("imageSizeinBytes: " + imageSizeInBytes);
+            //Console.WriteLine("outputSize: " + outputSize);
 
             //Tablica base64
-            string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-            byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
-            IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
-            Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
+            //string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+            //byte[] base64Bytes = Encoding.ASCII.GetBytes(base64);
+            //IntPtr base_64 = Marshal.AllocHGlobal(base64Bytes.Length);
+            //Marshal.Copy(base64Bytes, 0, base_64, base64Bytes.Length);
 
 
-            int base64_lenght = ImageToBase64(scan0, output, base_64, imageSizeInBytes);
-            Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
+            //int base64_lenght = ImageToBase64(scan0, output, base_64, imageSizeInBytes);
+            //Console.WriteLine("Długosc tekstu wynikowego base64: " + base64_lenght);
 
-            Marshal.FreeHGlobal(base_64);
+            //Marshal.FreeHGlobal(base_64);
             
 
-            string outputStringResult = Marshal.PtrToStringAnsi(output);
-            return outputStringResult;
+            //string outputStringResult = Marshal.PtrToStringAnsi(output);
+
+            string textResult = returnBase64FromText(inputString, inputString.Length, base64String);
+
+            Console.WriteLine("Wynik ostateczny: " + textResult);
+
+            return textResult;
         }
 
-        private string returnBase64FromText(string yourString, IntPtr output, int inputSize)
+        private string returnBase64FromText(string yourString, int inputSize, string base64String)
         {
             //Dane wejsciowe
             byte[] stringBytes = Encoding.ASCII.GetBytes(yourString);
             IntPtr input = Marshal.AllocHGlobal(stringBytes.Length);
             Marshal.Copy(stringBytes, 0, input, stringBytes.Length);
+
+            //Przygotowanie pamieci do wyniku
+            byte[] outputBytes = Encoding.ASCII.GetBytes(base64String);
+            IntPtr output = Marshal.AllocHGlobal(outputBytes.Length);
 
             //Tablica base64
             string base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

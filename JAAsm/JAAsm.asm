@@ -63,8 +63,8 @@ ImageToBase64 proc
     
 TextLoop:
     mov al, [rcx + r10]                 ; Wczytanie bajtu ze Ÿród³a
-    test al, al                         ; Sprawdzenie, czy bajt to terminator null
-    jz EndLoop                          ; Jeœli terminator null, zakoñcz pêtlê
+    ;test al, al                         ; Sprawdzenie, czy bajt to terminator null
+    ;jz EndLoop                          ; Jeœli terminator null, zakoñcz pêtlê
 
                     
     shr al, 2                           ; Pierwsze 6 bitów
