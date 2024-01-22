@@ -75,7 +75,7 @@ TextLoop:
 
     mov al, [rcx + r10]                 ; Ponowne wczytanie pierwszego bajtu
     and al, 3                           ; Wyzerowanie bitów 8-
-    shl al, 4                           ; przesuniecie bitowe w prawo o 6 pozycji
+    shl al, 4                           ; przesuniecie bitowe w prawo o 4 pozycji
     inc r10                             ; Inkrementacja licznika
     mov [rdx + rbx], al                 ; Tymaczasowe zapianie ostatnich 2 bitow do rejestru wynikowego
     mov al, [rcx + r10]                 ; Wczytanie 2 bajtu

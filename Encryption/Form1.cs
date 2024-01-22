@@ -170,10 +170,12 @@ namespace Encryption
 
             stopwatchASM.Stop();
 
-            //textBox2.Text = base64Asm;
-            label4.Text = stopwatchASM.ElapsedMilliseconds + " ms";
+            
 
             string outputStringResult = Marshal.PtrToStringAnsi(output);
+
+            //textBox2.Text = outputStringResult;
+            label4.Text = stopwatchASM.ElapsedMilliseconds + " ms";
 
             //Zwolnienie zaalokowanej pamieci
             Marshal.FreeHGlobal(input);
@@ -308,6 +310,7 @@ namespace Encryption
                 string base64StringASM = returnBase64FromImage(base64String.Length);
 
                 base64Asm = base64StringASM.Substring(0, base64StringASM.Length - 7);
+                //textBox2.Text = base64Asm;
 
                 Console.WriteLine("Długosc tekstu ASM " + base64StringASM.Length);
 
